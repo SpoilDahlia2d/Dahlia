@@ -1,9 +1,10 @@
 /* Configuration */
 const CONFIG = {
     passcode: "DAHLIA",
+    unlockCode: "GOHARD", // New code to restart after payment
     spamInterval: 2000,
     itemsUntilPaywall: 25,
-    worshipTimeout: 2500, // Time to click before failure
+    worshipTimeout: 2500,
     words: ["WORSHIP", "OBEY", "LOSER", "WEAK", "PAY", "SUBMIT", "MINE", "CLICK"]
 };
 
@@ -29,10 +30,17 @@ const spamContainer = document.getElementById('spam-container');
 const audio = document.getElementById('hypno-audio');
 const canvas = document.getElementById('hypno-canvas');
 
-// Flash Overlay (Create dynamically)
-const flashOverlay = document.createElement('div');
-flashOverlay.id = 'flash-overlay';
-document.body.appendChild(flashOverlay);
+// Unlock / Restart Elements
+const unlockInput = document.getElementById('unlock-input');
+const unlockError = document.getElementById('unlock-error');
+const flashOverlay = document.getElementById('flash-overlay') || createFlashOverlay();
+
+function createFlashOverlay() {
+    const d = document.createElement('div');
+    d.id = 'flash-overlay';
+    document.body.appendChild(d);
+    return d;
+}
 
 /* --- START SEQUENCE --- */
 startBtn.addEventListener('click', async () => {
@@ -45,6 +53,7 @@ startBtn.addEventListener('click', async () => {
 
 /* --- LEVEL 1: HACKER TERMINAL --- */
 async function runHackSequence() {
+    hackContainer.innerHTML = ""; // Reset
     const batt = await getBatteryLevel();
     const platform = navigator.platform;
 
@@ -118,21 +127,31 @@ function startLevel2() {
     lvl1.classList.add('hidden');
     lvl2.classList.remove('hidden');
 
+    // Clear previous spam if any
+    spamContainer.innerHTML = "";
+    s.spamCount = 0;
+
     // Preload
-    for (let i = 1; i <= 20; i++) {
-        const img = new Image();
-        img.src = `img/${i}.jpg`;
-        img.onload = () => s.loadedImages.push(`img/${i}.jpg`);
+    if (s.loadedImages.length === 0) {
+        for (let i = 1; i <= 20; i++) {
+            const img = new Image();
+            img.src = `img/${i}.jpg`;
+            img.onload = () => s.loadedImages.push(`img/${i}.jpg`);
+        }
     }
 
     spamLoop();
 }
 
 function spamLoop() {
+    // If we hit paywall limit
     if (s.spamCount >= CONFIG.itemsUntilPaywall) {
         triggerPaywall();
         return;
     }
+
+    // Safety check if user somehow reset mid-loop
+    if (lvl2.classList.contains('hidden')) return;
 
     s.spamCount++;
     const isImage = Math.random() > 0.4;
@@ -151,36 +170,26 @@ function spawnImage() {
     const img = document.createElement('img');
     img.src = src;
     img.className = 'spam-img';
-
     setRandomPos(img);
 
-    // --- FORCED ADORATION LOGIC ---
     let worshipTimer = setTimeout(() => {
-        // FAIL
         img.classList.add('ignored');
         failEffect();
     }, CONFIG.worshipTimeout);
 
     img.addEventListener('click', () => {
-        if (img.classList.contains('ignored')) return; // Too late
-
+        if (img.classList.contains('ignored')) return;
         clearTimeout(worshipTimer);
         img.classList.add('worshipped');
-        // Optional: play 'ding' sound or tiny vibrate
     });
 
     spamContainer.appendChild(img);
 }
 
 function failEffect() {
-    // Vibrate
     if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-
-    // Red Flash
     flashOverlay.style.opacity = 0.5;
     setTimeout(() => { flashOverlay.style.opacity = 0; }, 100);
-
-    // Speed up countdown to paywall (Punishment)
     s.spamCount += 2;
 }
 
@@ -201,10 +210,44 @@ function setRandomPos(el) {
     el.style.transform = `translate(-50%, -50%) rotate(${(Math.random() * 40) - 20}deg)`;
 }
 
-/* --- LEVEL 3: PAYWALL --- */
+/* --- LEVEL 3: PAYWALL & RESTART --- */
 function triggerPaywall() {
     lvl3.classList.remove('hidden');
-    audio.playbackRate = 0.8;
+    audio.playbackRate = 0.7; // Slow down audio
+}
+
+// Unlock / Restart Logic
+unlockInput.addEventListener('input', () => {
+    unlockError.classList.add('hidden');
+    if (unlockInput.value.toUpperCase() === CONFIG.unlockCode) {
+        resetGame();
+    }
+});
+
+unlockInput.addEventListener('change', () => {
+    if (unlockInput.value.toUpperCase() !== CONFIG.unlockCode) {
+        unlockError.classList.remove('hidden');
+        unlockInput.value = "";
+        unlockInput.focus();
+        if (navigator.vibrate) navigator.vibrate(500);
+    }
+});
+
+function resetGame() {
+    // Reset State
+    unlockInput.value = "";
+    s.spamCount = 0;
+
+    // Hide Level 3, Show Level 1
+    lvl3.classList.add('hidden');
+    lvl2.classList.add('hidden');
+    lvl1.classList.remove('hidden');
+
+    // Reset Audio
+    audio.playbackRate = 1.0;
+
+    // Restart Hack Sequence
+    runHackSequence();
 }
 
 /* --- CANVAS HYPNO --- */
