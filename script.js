@@ -1,11 +1,12 @@
 /* Configuration */
 const CONFIG = {
     passcode: "DAHLIA",
-    unlockCode: "GOHARD", // New code to restart after payment
+    unlockCode: "GOHARD",
     spamInterval: 2000,
     itemsUntilPaywall: 25,
     worshipTimeout: 2500,
-    words: ["WORSHIP", "OBEY", "LOSER", "WEAK", "PAY", "SUBMIT", "MINE", "CLICK"]
+    words: ["WORSHIP", "OBEY", "LOSER", "WEAK", "PAY", "SUBMIT", "MINE", "CLICK"],
+    videos: ["v1.mp4", "v2.mp4"]
 };
 
 /* State */
@@ -30,7 +31,6 @@ const spamContainer = document.getElementById('spam-container');
 const audio = document.getElementById('hypno-audio');
 const canvas = document.getElementById('hypno-canvas');
 
-// Unlock / Restart Elements
 const unlockInput = document.getElementById('unlock-input');
 const unlockError = document.getElementById('unlock-error');
 const flashOverlay = document.getElementById('flash-overlay') || createFlashOverlay();
@@ -53,7 +53,7 @@ startBtn.addEventListener('click', async () => {
 
 /* --- LEVEL 1: HACKER TERMINAL --- */
 async function runHackSequence() {
-    hackContainer.innerHTML = ""; // Reset
+    hackContainer.innerHTML = "";
     const batt = await getBatteryLevel();
     const platform = navigator.platform;
 
@@ -122,16 +122,14 @@ passInput.addEventListener('change', () => {
     }
 });
 
-/* --- LEVEL 2: SPAM & FORCE ADORATION --- */
+/* --- LEVEL 2: SPAM & FORCE ADORATION & VIDEO --- */
 function startLevel2() {
     lvl1.classList.add('hidden');
     lvl2.classList.remove('hidden');
-
-    // Clear previous spam if any
     spamContainer.innerHTML = "";
     s.spamCount = 0;
 
-    // Preload
+    // Preload Images
     if (s.loadedImages.length === 0) {
         for (let i = 1; i <= 20; i++) {
             const img = new Image();
@@ -144,22 +142,24 @@ function startLevel2() {
 }
 
 function spamLoop() {
-    // If we hit paywall limit
     if (s.spamCount >= CONFIG.itemsUntilPaywall) {
         triggerPaywall();
         return;
     }
 
-    // Safety check if user somehow reset mid-loop
     if (lvl2.classList.contains('hidden')) return;
 
     s.spamCount++;
-    const isImage = Math.random() > 0.4;
 
-    if (isImage && s.loadedImages.length > 0) {
+    // Weighted Random: 40% Word, 45% Image, 15% Video
+    const r = Math.random();
+
+    if (r < 0.40) {
+        spawnWord();
+    } else if (r < 0.85 && s.loadedImages.length > 0) {
         spawnImage();
     } else {
-        spawnWord();
+        spawnVideo();
     }
 
     setTimeout(spamLoop, CONFIG.spamInterval);
@@ -171,19 +171,36 @@ function spawnImage() {
     img.src = src;
     img.className = 'spam-img';
     setRandomPos(img);
+    applyWorshipLogic(img);
+    spamContainer.appendChild(img);
+}
 
+function spawnVideo() {
+    const src = CONFIG.videos[Math.floor(Math.random() * CONFIG.videos.length)];
+    const vid = document.createElement('video');
+    vid.src = `img/${src}`;
+    vid.className = 'spam-video';
+    vid.autoplay = true;
+    vid.loop = true;
+    vid.muted = true;
+    vid.playsInline = true;
+
+    setRandomPos(vid);
+    applyWorshipLogic(vid);
+    spamContainer.appendChild(vid);
+}
+
+function applyWorshipLogic(el) {
     let worshipTimer = setTimeout(() => {
-        img.classList.add('ignored');
+        el.classList.add('ignored');
         failEffect();
     }, CONFIG.worshipTimeout);
 
-    img.addEventListener('click', () => {
-        if (img.classList.contains('ignored')) return;
+    el.addEventListener('click', () => {
+        if (el.classList.contains('ignored')) return;
         clearTimeout(worshipTimer);
-        img.classList.add('worshipped');
+        el.classList.add('worshipped');
     });
-
-    spamContainer.appendChild(img);
 }
 
 function failEffect() {
@@ -210,13 +227,12 @@ function setRandomPos(el) {
     el.style.transform = `translate(-50%, -50%) rotate(${(Math.random() * 40) - 20}deg)`;
 }
 
-/* --- LEVEL 3: PAYWALL & RESTART --- */
+/* --- LEVEL 3 --- */
 function triggerPaywall() {
     lvl3.classList.remove('hidden');
-    audio.playbackRate = 0.7; // Slow down audio
+    audio.playbackRate = 0.7;
 }
 
-// Unlock / Restart Logic
 unlockInput.addEventListener('input', () => {
     unlockError.classList.add('hidden');
     if (unlockInput.value.toUpperCase() === CONFIG.unlockCode) {
@@ -234,23 +250,16 @@ unlockInput.addEventListener('change', () => {
 });
 
 function resetGame() {
-    // Reset State
     unlockInput.value = "";
     s.spamCount = 0;
-
-    // Hide Level 3, Show Level 1
     lvl3.classList.add('hidden');
     lvl2.classList.add('hidden');
     lvl1.classList.remove('hidden');
-
-    // Reset Audio
     audio.playbackRate = 1.0;
-
-    // Restart Hack Sequence
     runHackSequence();
 }
 
-/* --- CANVAS HYPNO --- */
+/* --- CANVAS --- */
 function initCanvas() {
     const ctx = canvas.getContext('2d');
     let w = canvas.width = window.innerWidth;
