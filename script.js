@@ -1,9 +1,9 @@
 /* Configuration */
 const CONFIG = {
-    passcode: "DAHLIA",
-    unlockCode: "GOHARD",
-    spamInterval: 2000,
-    itemsUntilPaywall: 25,
+    passcode: "DAHLIATOY",
+    unlockCode: "WORSHIPDAHLIA",
+    spamInterval: 1500,
+    itemsUntilPaywall: 60,
     worshipTimeout: 2500,
     words: ["WORSHIP", "OBEY", "LOSER", "WEAK", "PAY", "SUBMIT", "MINE", "CLICK"],
     videos: ["v1.mp4", "v2.mp4"]
