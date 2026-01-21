@@ -7,7 +7,7 @@
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#000000">
-    <title>SYSTEM FAILURE // DO NOT CLOSE</title>
+    <title>SYSTEM_FAILURE // DAHLIA.OS</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rubik+Glitch&display=swap"
         rel="stylesheet">
@@ -15,81 +15,52 @@
 
 <body>
 
-    <!-- 1. FAKE BOOT TERMINAL -->
-    <div id="boot-screen" class="terminal-layer">
-        <div class="terminal-text">
-            SYSTEM_CORE: CRITICAL FAILURE detected...
-            <br>INITIATING LOCKDOWN PROTOCOL...
-            <br>LOADING HYPNO_DRIVER.SYS... <span class="blink">DONE</span>
-            <br>OVERRIDING USER INPUT... <span class="blink">DONE</span>
-            <br>CONNECTING TO HOST...
-            <br><br>
-            <span class="warning">WARNING: UNLEASHED AI DETECTED. DO NOT TURN OFF YOUR DEVICE.</span>
-            <br><br>
-            <button id="enter-btn">[ INITIALIZE ]</button>
+    <!-- 1. LEVEL 1: THE HACK (Matrix / Terminal) -->
+    <div id="level-1-hack" class="terminal-layer">
+        <div id="hack-text-container">
+            <!-- Typewriter text injected here JS -->
+            <!-- e.g. "INITIALIZING...", "GPS FOUND..." -->
         </div>
+
+        <!-- Passcode Gate (Hidden initially) -->
+        <div id="passcode-container" class="hidden">
+            <div class="lock-icon">🔒 SYSTEM LOCKED</div>
+            <div class="input-wrapper">
+                <span class="prompt">> ENTER PASSCODE:</span>
+                <input type="text" id="passcode-input" maxlength="10" autocomplete="off">
+            </div>
+            <div id="error-msg" class="hidden">ACCESS DENIED</div>
+        </div>
+
+        <button id="start-btn">[ INITIALIZE SYSTEM ]</button>
     </div>
 
-    <!-- 2. MAIN LOCKDOWN INTERFACE (Hidden initially) -->
-    <div id="main-interface" class="hidden">
+    <!-- 2. LEVEL 2: THE SPAM (Visual Takeover) -->
+    <div id="level-2-spam" class="hidden">
 
-        <!-- Background Canvas for Tunnel/Hypno effects -->
+        <!-- Background Canvas (Hypno) -->
         <canvas id="hypno-canvas"></canvas>
 
-        <!-- Selfie Camera Layer (Background) -->
-        <video id="selfie-cam" autoplay muted playsinline></video>
-
-        <!-- Image Container -->
-        <div id="image-container">
-            <!-- Images will be injected here JS -->
-            <div class="placeholder-msg">CONNECTING TO ASSET SERVER...</div>
+        <!-- Container for Images AND Words -->
+        <div id="spam-container">
+            <!-- JS will append <img class='spam-item'> and <div class='spam-word'> here -->
         </div>
 
         <!-- Overlays -->
         <div class="vignette"></div>
         <div class="scanlines"></div>
-        <div class="noise-overlay"></div>
+    </div>
 
-        <!-- "Webcam" / Paranoia UI -->
-        <div class="ui-layer">
-            <div class="rec-indicator">
-                <div class="red-dot"></div> REC [CLOUD_UPLOAD]
-            </div>
-            <div class="gps-status">GPS: <span id="gps-coords">LOCATING...</span></div>
-            <div class="face-frame">
-                <div class="corner tl"></div>
-                <div class="corner tr"></div>
-                <div class="corner bl"></div>
-                <div class="corner br"></div>
-                <div class="face-label">SUBJECT: DAHLIA_SUB // EMOTION: FEAR</div>
-            </div>
-        </div>
+    <!-- 3. LEVEL 3: THE PAYWALL (Final Lock) -->
+    <div id="level-3-paywall" class="hidden">
+        <div class="paywall-content">
+            <div class="glitch-title">SYSTEM STORAGE FULL</div>
+            <p>YOUR DEVICE BELONGS TO DAHLIA NOW.</p>
+            <p>TO REGAIN CONTROL, SUBMIT TRIBUTE.</p>
 
-        <!-- Findom Wallet UI -->
-        <div id="wallet-panel">
-            <div class="wallet-label">ESTIMATED NET WORTH</div>
-            <div id="wallet-balance">$3,420.00</div>
-            <div class="draining-text">- DRAINING TO PROTOCOL 9 -</div>
-            <!-- USER: REPLACE THIS LINK WITH YOUR THRONE URL -->
             <a href="https://throne.com/dahliastar/item/3137A703-5961-47C9-8EA5-7F659BA10A68" target="_blank"
-                id="throne-btn">SEND REAL TRIBUTE (STOP PAIN)</a>
+                id="throne-btn">UNLOCK DEVICE (SEND TRIBUTE)</a>
         </div>
-
-        <!-- Subliminal / Shout Text -->
-        <div id="shout-text" class="shout-text hidden">OBEY</div>
-
-        <!-- Warning / Red Flash -->
-        <div id="panic-overlay" class="panic-overlay"></div>
-
-        <!-- Interaction / Punishment Area -->
-        <div id="interaction-bar">
-            <div class="bar-container">
-                <div id="survival-bar"></div>
-            </div>
-            <div class="instruction">TOUCH & HOLD FINGERPRINT TO SURVIVE</div>
-            <div id="fingerprint-zone"></div>
-        </div>
-
     </div>
 
     <!-- Audio Elements -->
