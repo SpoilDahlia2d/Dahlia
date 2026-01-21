@@ -1,151 +1,6 @@
-:root {
-    --bg-color: #000;
-    --main-color: #ff00ff;
-    /* Fuchsia / Hot Pink */
-    --accent-color: #ffffff;
-    --error-color: #ff0000;
-    --font-main: 'Share Tech Mono', monospace;
-    --font-glitch: 'Rubik Glitch', sans-serif;
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    user-select: none;
-    -webkit-user-select: none;
-}
-
-body {
-    background-color: var(--bg-color);
-    color: var(--main-color);
-    font-family: var(--font-main);
-    overflow: hidden;
-    height: 100vh;
-    width: 100vw;
-}
-
-.hidden {
-    display: none !important;
-}
-
-/* LEVELS LAYOUT */
-#level-1-hack,
-#level-2-spam,
-#level-3-paywall {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-/* --- LEVEL 1: HACKER TERMINAL --- */
-#level-1-hack {
-    z-index: 100;
-    background: #000;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    /* Text flows down */
-    font-size: 1.1rem;
-    padding-top: 10vh;
-}
-
-#hack-text-container {
-    text-shadow: 0 0 5px var(--main-color);
-    margin-bottom: 20px;
-}
-
-.log-line {
-    display: block;
-    margin-bottom: 5px;
-    border-right: 2px solid transparent;
-}
-
-.log-line.typing {
-    border-right: 10px solid var(--main-color);
-    animation: blinkCursor 0.1s infinite;
-}
-
-/* Passcode UI */
-#passcode-container {
-    margin-top: 20px;
-    border: 2px solid var(--main-color);
-    padding: 20px;
-    background: rgba(255, 0, 255, 0.1);
-    box-shadow: 0 0 15px var(--main-color);
-    text-align: center;
-}
-
-.input-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
-#passcode-input {
-    background: transparent;
-    border: none;
-    border-bottom: 2px solid var(--main-color);
-    color: var(--accent-color);
-    font-family: var(--font-main);
-    font-size: 1.5rem;
-    width: 150px;
-    text-transform: uppercase;
-    outline: none;
-    text-align: center;
-}
-
-#error-msg {
-    color: var(--error-color);
-    font-weight: bold;
-    margin-top: 10px;
-    animation: shake 0.5s;
-}
-
-#start-btn {
-    position: absolute;
-    bottom: 20%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--main-color);
-    color: #000;
-    border: none;
-    padding: 15px 30px;
-    font-size: 1.5rem;
-    font-family: var(--font-glitch);
-    cursor: pointer;
-    animation: pulse 1s infinite;
-}
-
-/* --- LEVEL 2: SPAM --- */
-#level-2-spam {
-    background: #000;
-    z-index: 50;
-}
-
-#hypno-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0.2;
-}
-
-#spam-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-}
-
-.spam-img {
+/* Configuration */
+.spam-img,
+.spam-video {
     position: absolute;
     max-width: 60vw;
     max-height: 60vh;
@@ -155,61 +10,25 @@ body {
     transition: all 0.3s;
     cursor: crosshair;
     pointer-events: auto;
-    /* Enable clicks */
+    object-fit: cover;
+    /* For videos */
 }
 
-.spam-img.worshipped {
+.spam-img.worshipped,
+.spam-video.worshipped {
     border-color: #0f0;
-    /* Green */
     box-shadow: 0 0 20px #0f0;
     filter: brightness(1.2);
     z-index: 10 !important;
-    /* Send to back a bit */
     pointer-events: none;
 }
 
-.spam-img.ignored {
+.spam-img.ignored,
+.spam-video.ignored {
     border-color: var(--error-color);
-    /* Red */
     box-shadow: 0 0 20px var(--error-color);
     filter: grayscale(100%) contrast(1.5);
     animation: shake 0.5s infinite;
-}
-
-/* Flash Overlay for Failure */
-#flash-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: red;
-    opacity: 0;
-    pointer-events: none;
-    z-index: 900;
-    transition: opacity 0.1s;
-}
-
-.spam-word {
-    position: absolute;
-    font-family: var(--font-glitch);
-    font-size: 3rem;
-    color: #fff;
-    text-shadow: 3px 3px 0px var(--main-color), -3px -3px 0px red;
-    z-index: 200;
-    /* Above images */
-    animation: glitchAnim 0.2s infinite;
-    transform: translate(-50%, -50%);
-    white-space: nowrap;
-}
-
-/* --- LEVEL 3: PAYWALL --- */
-#level-3-paywall {
-    z-index: 999;
-    background: rgba(0, 0, 0, 0.95);
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 /* UNLOCK INPUT STYLES (Reuse level 1 styles logic) */
@@ -245,96 +64,4 @@ body {
     pointer-events: none;
     z-index: 900;
     transition: opacity 0.1s;
-}
-
-.glitch-title {
-    font-family: var(--font-glitch);
-    font-size: 3rem;
-    color: var(--error-color);
-    margin-bottom: 20px;
-}
-
-#throne-btn {
-    display: inline-block;
-    margin-top: 30px;
-    padding: 20px;
-    background: var(--main-color);
-    color: #000;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1.2rem;
-    animation: pulse 0.5s infinite alternate;
-}
-
-/* UTILS & ANIMATIONS */
-.scanlines {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-    background-size: 100% 4px;
-    pointer-events: none;
-    z-index: 900;
-}
-
-@keyframes popIn {
-    0% {
-        transform: translate(-50%, -50%) scale(0);
-    }
-
-    100% {
-        transform: translate(-50%, -50%) scale(1);
-    }
-}
-
-@keyframes blinkCursor {
-    50% {
-        border-color: transparent;
-    }
-}
-
-@keyframes pulse {
-    to {
-        transform: translateX(-50%) scale(1.05);
-    }
-}
-
-@keyframes shake {
-
-    0%,
-    100% {
-        transform: translateX(0);
-    }
-
-    25% {
-        transform: translateX(-10px);
-    }
-
-    75% {
-        transform: translateX(10px);
-    }
-}
-
-@keyframes glitchAnim {
-    0% {
-        transform: translate(-52%, -50%);
-    }
-
-    20% {
-        transform: translate(-48%, -50%);
-    }
-
-    40% {
-        transform: translate(-50%, -48%);
-    }
-
-    60% {
-        transform: translate(-50%, -52%);
-    }
-
-    100% {
-        transform: translate(-50%, -50%);
-    }
 }
