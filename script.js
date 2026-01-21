@@ -1,14 +1,15 @@
 /* Configuration */
 const CONFIG = {
     passcode: "DAHLIA",
-    spamInterval: 2000, // 2 seconds exact
-    itemsUntilPaywall: 25, // How many items before lock
+    spamInterval: 2000,
+    itemsUntilPaywall: 25,
+    worshipTimeout: 2500, // Time to click before failure
     words: ["WORSHIP", "OBEY", "LOSER", "WEAK", "PAY", "SUBMIT", "MINE", "CLICK"]
 };
 
 /* State */
 let s = {
-    level: 0, // 0=Start, 1=Hack, 2=Spam, 3=Paywall
+    level: 0,
     spamCount: 0,
     loadedImages: []
 };
@@ -28,24 +29,22 @@ const spamContainer = document.getElementById('spam-container');
 const audio = document.getElementById('hypno-audio');
 const canvas = document.getElementById('hypno-canvas');
 
+// Flash Overlay (Create dynamically)
+const flashOverlay = document.createElement('div');
+flashOverlay.id = 'flash-overlay';
+document.body.appendChild(flashOverlay);
+
 /* --- START SEQUENCE --- */
 startBtn.addEventListener('click', async () => {
-    // Audio Start
     try { audio.play(); } catch (e) { }
-
-    // Fullscreen
     try { document.documentElement.requestFullscreen(); } catch (e) { }
-
     startBtn.classList.add('hidden');
-
-    // Start Level 1
     runHackSequence();
     initCanvas();
 });
 
 /* --- LEVEL 1: HACKER TERMINAL --- */
 async function runHackSequence() {
-    // Mock Data
     const batt = await getBatteryLevel();
     const platform = navigator.platform;
 
@@ -55,7 +54,7 @@ async function runHackSequence() {
         `DETECTED PLATFORM: ${platform.toUpperCase()}`,
         `BATTERY STATUS: ${batt}%`,
         "ACCESSING GPS MODULE...",
-        "GPS LOCKED: [45.4642, 9.1900]", // Generic or Real if API allowed
+        "GPS LOCKED: [45.4642, 9.1900]",
         "DOWNLOADING GALLERY...",
         "CONTACTS COPIED...",
         "SYSTEM VULNERABLE.",
@@ -63,7 +62,6 @@ async function runHackSequence() {
     ];
 
     let i = 0;
-
     function nextLog() {
         if (i >= logs.length) {
             showPasscode();
@@ -75,15 +73,12 @@ async function runHackSequence() {
         div.innerText = "> " + logs[i];
         hackContainer.appendChild(div);
 
-        // Typing sound effect could go here
-
         setTimeout(() => {
-            div.classList.remove('typing'); // Stop cursor on this line
+            div.classList.remove('typing');
             i++;
             nextLog();
-        }, 800 + Math.random() * 500); // Random typing speed
+        }, 800 + Math.random() * 500);
     }
-
     nextLog();
 }
 
@@ -101,7 +96,6 @@ function showPasscode() {
     passInput.focus();
 }
 
-/* --- PASSCODE LOGIC --- */
 passInput.addEventListener('input', () => {
     errorMsg.classList.add('hidden');
     if (passInput.value.toUpperCase() === CONFIG.passcode) {
@@ -119,20 +113,18 @@ passInput.addEventListener('change', () => {
     }
 });
 
-/* --- LEVEL 2: SPAM --- */
+/* --- LEVEL 2: SPAM & FORCE ADORATION --- */
 function startLevel2() {
     lvl1.classList.add('hidden');
     lvl2.classList.remove('hidden');
 
-    // Preload Logic (Static)
-    // Assuming images 1.jpg to 20.jpg exist
+    // Preload
     for (let i = 1; i <= 20; i++) {
         const img = new Image();
         img.src = `img/${i}.jpg`;
         img.onload = () => s.loadedImages.push(`img/${i}.jpg`);
     }
 
-    // Start Loop
     spamLoop();
 }
 
@@ -143,9 +135,6 @@ function spamLoop() {
     }
 
     s.spamCount++;
-
-    // Choose: Image or Word?
-    // Alternating usually feels good, or random
     const isImage = Math.random() > 0.4;
 
     if (isImage && s.loadedImages.length > 0) {
@@ -163,9 +152,36 @@ function spawnImage() {
     img.src = src;
     img.className = 'spam-img';
 
-    // Random Pos
     setRandomPos(img);
+
+    // --- FORCED ADORATION LOGIC ---
+    let worshipTimer = setTimeout(() => {
+        // FAIL
+        img.classList.add('ignored');
+        failEffect();
+    }, CONFIG.worshipTimeout);
+
+    img.addEventListener('click', () => {
+        if (img.classList.contains('ignored')) return; // Too late
+
+        clearTimeout(worshipTimer);
+        img.classList.add('worshipped');
+        // Optional: play 'ding' sound or tiny vibrate
+    });
+
     spamContainer.appendChild(img);
+}
+
+function failEffect() {
+    // Vibrate
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+
+    // Red Flash
+    flashOverlay.style.opacity = 0.5;
+    setTimeout(() => { flashOverlay.style.opacity = 0; }, 100);
+
+    // Speed up countdown to paywall (Punishment)
+    s.spamCount += 2;
 }
 
 function spawnWord() {
@@ -173,11 +189,9 @@ function spawnWord() {
     const div = document.createElement('div');
     div.innerText = word;
     div.className = 'spam-word';
-
     setRandomPos(div);
     div.style.color = Math.random() > 0.5 ? '#fff' : '#ff00ff';
     div.style.fontSize = (2 + Math.random() * 3) + 'rem';
-
     spamContainer.appendChild(div);
 }
 
@@ -190,9 +204,6 @@ function setRandomPos(el) {
 /* --- LEVEL 3: PAYWALL --- */
 function triggerPaywall() {
     lvl3.classList.remove('hidden');
-    // Stop creating items, but keep existing layer
-
-    // Audio Effect: lower playback rate
     audio.playbackRate = 0.8;
 }
 
@@ -206,11 +217,9 @@ function initCanvas() {
     function draw() {
         ctx.fillStyle = 'rgba(0,0,0,0.1)';
         ctx.fillRect(0, 0, w, h);
-
         t += 0.1;
         ctx.strokeStyle = '#ff00ff';
         ctx.lineWidth = 1;
-
         ctx.beginPath();
         for (let i = 0; i < 50; i++) {
             let r = i * 10 + Math.sin(t) * 50;
@@ -218,7 +227,6 @@ function initCanvas() {
             ctx.arc(w / 2, h / 2, r, 0, Math.PI * 2);
         }
         ctx.stroke();
-
         requestAnimationFrame(draw);
     }
     draw();
