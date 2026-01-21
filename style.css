@@ -152,6 +152,42 @@ body {
     border: 2px solid var(--main-color);
     box-shadow: 5px 5px 0px rgba(255, 0, 255, 0.5);
     animation: popIn 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    transition: all 0.3s;
+    cursor: crosshair;
+    pointer-events: auto;
+    /* Enable clicks */
+}
+
+.spam-img.worshipped {
+    border-color: #0f0;
+    /* Green */
+    box-shadow: 0 0 20px #0f0;
+    filter: brightness(1.2);
+    z-index: 10 !important;
+    /* Send to back a bit */
+    pointer-events: none;
+}
+
+.spam-img.ignored {
+    border-color: var(--error-color);
+    /* Red */
+    box-shadow: 0 0 20px var(--error-color);
+    filter: grayscale(100%) contrast(1.5);
+    animation: shake 0.5s infinite;
+}
+
+/* Flash Overlay for Failure */
+#flash-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: red;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 900;
+    transition: opacity 0.1s;
 }
 
 .spam-word {
