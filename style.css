@@ -212,12 +212,39 @@ body {
     align-items: center;
 }
 
-.paywall-content {
+/* UNLOCK INPUT STYLES (Reuse level 1 styles logic) */
+#unlock-input {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--main-color);
+    color: var(--accent-color);
+    font-family: var(--font-main);
+    font-size: 1.2rem;
+    width: 120px;
+    text-transform: uppercase;
+    outline: none;
     text-align: center;
-    border: 4px solid var(--main-color);
-    padding: 30px;
-    width: 90%;
-    box-shadow: 0 0 50px var(--main-color);
+}
+
+#unlock-error {
+    color: var(--error-color);
+    font-weight: bold;
+    margin-top: 5px;
+    animation: shake 0.5s;
+}
+
+/* Flash Overlay for Failure */
+#flash-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: red;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 900;
+    transition: opacity 0.1s;
 }
 
 .glitch-title {
