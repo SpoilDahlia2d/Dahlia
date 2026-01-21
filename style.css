@@ -1,27 +1,26 @@
 :root {
     --bg-color: #000;
-    --term-green: #0f0;
-    --panic-red: #ff0000;
-    --static-white: #e0e0e0;
-    --accent-color: #ff00ff;
+    --main-color: #ff00ff;
+    /* Fuchsia / Hot Pink */
+    --accent-color: #ffffff;
+    --error-color: #ff0000;
+    --font-main: 'Share Tech Mono', monospace;
+    --font-glitch: 'Rubik Glitch', sans-serif;
 }
 
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    cursor: none;
-    /* Hide cursor by default in the experience */
     user-select: none;
     -webkit-user-select: none;
 }
 
 body {
     background-color: var(--bg-color);
-    color: var(--term-green);
-    font-family: 'Share Tech Mono', monospace;
+    color: var(--main-color);
+    font-family: var(--font-main);
     overflow: hidden;
-    /* No scroll */
     height: 100vh;
     width: 100vw;
 }
@@ -30,450 +29,249 @@ body {
     display: none !important;
 }
 
-/* --- BOOT SCREEN (TERMINAL) --- */
-.terminal-layer {
-    position: fixed;
+/* LEVELS LAYOUT */
+#level-1-hack,
+#level-2-spam,
+#level-3-paywall {
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+}
+
+/* --- LEVEL 1: HACKER TERMINAL --- */
+#level-1-hack {
+    z-index: 100;
     background: #000;
-    z-index: 9999;
-    padding: 2rem;
+    padding: 20px;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: auto !important;
-    /* Show cursor here */
+    flex-direction: column;
+    justify-content: flex-start;
+    /* Text flows down */
+    font-size: 1.1rem;
+    padding-top: 10vh;
 }
 
-.terminal-text {
-    font-size: 1.2rem;
-    line-height: 1.5;
-    text-shadow: 0 0 5px var(--term-green);
+#hack-text-container {
+    text-shadow: 0 0 5px var(--main-color);
+    margin-bottom: 20px;
 }
 
-.warning {
-    color: var(--panic-red);
-    font-weight: bold;
-    animation: flash 0.5s infinite;
+.log-line {
+    display: block;
+    margin-bottom: 5px;
+    border-right: 2px solid transparent;
 }
 
-#enter-btn {
+.log-line.typing {
+    border-right: 10px solid var(--main-color);
+    animation: blinkCursor 0.1s infinite;
+}
+
+/* Passcode UI */
+#passcode-container {
     margin-top: 20px;
+    border: 2px solid var(--main-color);
+    padding: 20px;
+    background: rgba(255, 0, 255, 0.1);
+    box-shadow: 0 0 15px var(--main-color);
+    text-align: center;
+}
+
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+#passcode-input {
     background: transparent;
-    border: 2px solid var(--term-green);
-    color: var(--term-green);
-    padding: 15px 30px;
-    font-family: inherit;
-    font-size: 1.2rem;
-    cursor: pointer;
+    border: none;
+    border-bottom: 2px solid var(--main-color);
+    color: var(--accent-color);
+    font-family: var(--font-main);
+    font-size: 1.5rem;
+    width: 150px;
     text-transform: uppercase;
+    outline: none;
+    text-align: center;
 }
 
-#enter-btn:hover {
-    background: var(--term-green);
+#error-msg {
+    color: var(--error-color);
+    font-weight: bold;
+    margin-top: 10px;
+    animation: shake 0.5s;
+}
+
+#start-btn {
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--main-color);
     color: #000;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.5rem;
+    font-family: var(--font-glitch);
+    cursor: pointer;
+    animation: pulse 1s infinite;
 }
 
-/* --- MAIN INTERFACE --- */
-#main-interface {
-    position: relative;
-    width: 100%;
-    height: 100%;
+/* --- LEVEL 2: SPAM --- */
+#level-2-spam {
+    background: #000;
+    z-index: 50;
 }
 
-/* Background Canvas */
 #hypno-canvas {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 2;
-    /* Still overlaying video */
-    opacity: 0.3;
+    opacity: 0.2;
+}
+
+#spam-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
 }
 
-/* Selfie Camera Layer */
-#selfie-cam {
+.spam-img {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 0;
-    filter: grayscale(100%) contrast(1.2) brightness(0.6);
-    transform: scaleX(-1);
-    /* Mirror */
+    max-width: 60vw;
+    max-height: 60vh;
+    border: 2px solid var(--main-color);
+    box-shadow: 5px 5px 0px rgba(255, 0, 255, 0.5);
+    animation: popIn 0.3s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-/* Image Layer */
-#image-container {
+.spam-word {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 3;
+    font-family: var(--font-glitch);
+    font-size: 3rem;
+    color: #fff;
+    text-shadow: 3px 3px 0px var(--main-color), -3px -3px 0px red;
+    z-index: 200;
+    /* Above images */
+    animation: glitchAnim 0.2s infinite;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+}
+
+/* --- LEVEL 3: PAYWALL --- */
+#level-3-paywall {
+    z-index: 999;
+    background: rgba(0, 0, 0, 0.95);
     display: flex;
     justify-content: center;
     align-items: center;
-    pointer-events: none;
-    /* Let clicks pass through */
 }
 
-#image-container img {
-    max-width: 90%;
-    max-height: 80%;
-    object-fit: contain;
-    opacity: 0.8;
-    /* See webcam through it */
-    mix-blend-mode: hard-light;
-}
-
-.placeholder-msg {
-    color: var(--panic-red);
-    font-size: 1.2rem;
-    animation: pulse 1s infinite;
+.paywall-content {
     text-align: center;
-    background: rgba(0, 0, 0, 0.7);
+    border: 4px solid var(--main-color);
+    padding: 30px;
+    width: 90%;
+    box-shadow: 0 0 50px var(--main-color);
+}
+
+.glitch-title {
+    font-family: var(--font-glitch);
+    font-size: 3rem;
+    color: var(--error-color);
+    margin-bottom: 20px;
+}
+
+#throne-btn {
+    display: inline-block;
+    margin-top: 30px;
     padding: 20px;
-    border: 1px solid var(--panic-red);
+    background: var(--main-color);
+    color: #000;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.2rem;
+    animation: pulse 0.5s infinite alternate;
 }
 
-/* --- OVERLAYS & EFFECTS --- */
-.vignette {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    box-shadow: inset 0 0 100px #000;
-    z-index: 4;
-    pointer-events: none;
-}
-
+/* UTILS & ANIMATIONS */
 .scanlines {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-    background-size: 100% 3px, 3px 100%;
-    z-index: 5;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+    background-size: 100% 4px;
     pointer-events: none;
+    z-index: 900;
 }
 
-.ui-layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 10;
-    pointer-events: none;
-    padding: 15px;
-}
-
-/* Webcam Elements */
-.rec-indicator {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    color: var(--panic-red);
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 1rem;
-    background: rgba(0, 0, 0, 0.5);
-    padding: 5px 10px;
-}
-
-.gps-status {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    color: var(--term-green);
-    font-size: 0.8rem;
-    background: rgba(0, 0, 0, 0.5);
-    padding: 5px;
-}
-
-.red-dot {
-    width: 12px;
-    height: 12px;
-    background: var(--panic-red);
-    border-radius: 50%;
-    animation: blinker 1s infinite;
-}
-
-.face-frame {
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 70vw;
-    height: 70vw;
-    border: 1px solid rgba(255, 0, 0, 0.5);
-    border-radius: 10%;
-}
-
-.face-label {
-    position: absolute;
-    bottom: -25px;
-    width: 100%;
-    text-align: center;
-    color: var(--panic-red);
-    font-size: 0.8rem;
-    text-shadow: 0 0 5px red;
-    background: rgba(0, 0, 0, 0.8);
-}
-
-.corner {
-    position: absolute;
-    width: 15px;
-    height: 15px;
-    border: 3px solid var(--panic-red);
-}
-
-.tl {
-    top: -2px;
-    left: -2px;
-    border-right: 0;
-    border-bottom: 0;
-}
-
-.tr {
-    top: -2px;
-    right: -2px;
-    border-left: 0;
-    border-bottom: 0;
-}
-
-.bl {
-    bottom: -2px;
-    left: -2px;
-    border-right: 0;
-    border-top: 0;
-}
-
-.br {
-    bottom: -2px;
-    right: -2px;
-    border-left: 0;
-    border-top: 0;
-}
-
-/* Wallet Panel */
-#wallet-panel {
-    position: absolute;
-    top: 65%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 85%;
-    text-align: center;
-    z-index: 100;
-    background: rgba(0, 0, 0, 0.85);
-    border: 1px solid var(--term-green);
-    padding: 15px;
-    box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
-}
-
-.wallet-label {
-    color: #888;
-    font-size: 0.8rem;
-    letter-spacing: 1px;
-}
-
-#wallet-balance {
-    color: var(--term-green);
-    font-size: 2rem;
-    font-family: 'Share Tech Mono', monospace;
-    margin: 10px 0;
-}
-
-.draining-text {
-    color: var(--panic-red);
-    font-size: 0.7rem;
-    animation: blinker 0.2s infinite;
-    margin-bottom: 15px;
-}
-
-#throne-btn {
-    display: inline-block;
-    background: var(--accent-color);
-    color: #fff;
-    text-decoration: none;
-    padding: 10px 20px;
-    font-weight: bold;
-    border: 2px solid #fff;
-    animation: pulse 1s infinite alternate;
-    font-size: 0.9rem;
-    pointer-events: auto;
-    /* Active! */
-    cursor: pointer;
-}
-
-/* Shout Overlay */
-.shout-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-family: 'Rubik Glitch', sans-serif;
-    font-size: 15vw;
-    color: white;
-    text-shadow: 5px 5px 0px var(--panic-red);
-    z-index: 150;
-    pointer-events: none;
-    text-align: center;
-    line-height: 0.9;
-    width: 100%;
-}
-
-/* Panic Red */
-.panic-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--panic-red);
-    opacity: 0;
-    z-index: 140;
-    pointer-events: none;
-    transition: opacity 0.2s;
-}
-
-/* Punishment Bar */
-#interaction-bar {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    text-align: center;
-    z-index: 120;
-    pointer-events: auto;
-    /* Allow touch */
-}
-
-.bar-container {
-    width: 100%;
-    height: 15px;
-    background: #222;
-    border: 1px solid #555;
-    margin-bottom: 10px;
-}
-
-#survival-bar {
-    width: 100%;
-    height: 100%;
-    background: var(--term-green);
-    transition: width 0.1s linear;
-}
-
-.instruction {
-    font-size: 0.8rem;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-}
-
-#fingerprint-zone {
-    width: 70px;
-    height: 90px;
-    margin: 0 auto;
-    border: 2px dashed var(--term-green);
-    border-radius: 30px;
-    background: rgba(0, 255, 0, 0.1);
-    box-shadow: 0 0 15px var(--term-green);
-    cursor: pointer;
-    background-image: repeating-linear-gradient(45deg, rgba(0, 255, 0, 0.2) 0, rgba(0, 255, 0, 0.2) 2px, transparent 2px, transparent 6px);
-}
-
-#fingerprint-zone:active {
-    background: var(--term-green);
-    box-shadow: 0 0 30px var(--term-green);
-}
-
-/* Animations */
-@keyframes blinker {
-    50% {
-        opacity: 0;
+@keyframes popIn {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
     }
-}
 
-@keyframes flash {
-
-    0%,
-    50%,
     100% {
-        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
     }
+}
 
-    25%,
-    75% {
-        opacity: 0;
+@keyframes blinkCursor {
+    50% {
+        border-color: transparent;
     }
 }
 
 @keyframes pulse {
-    from {
-        opacity: 0.7;
-        transform: scale(0.98);
-    }
-
     to {
-        opacity: 1;
-        transform: scale(1.02);
+        transform: translateX(-50%) scale(1.05);
     }
-}
-
-/* Intense Shake Class (applied by JS) */
-.shake-hard {
-    animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both infinite;
 }
 
 @keyframes shake {
 
-    10%,
-    90% {
-        transform: translate3d(-2px, 0, 0) rotate(1deg);
+    0%,
+    100% {
+        transform: translateX(0);
     }
 
-    20%,
-    80% {
-        transform: translate3d(4px, 0, 0);
+    25% {
+        transform: translateX(-10px);
     }
 
-    30%,
-    50%,
-    70% {
-        transform: translate3d(-6px, 0, 0) rotate(-1deg);
-    }
-
-    40%,
-    60% {
-        transform: translate3d(6px, 0, 0);
+    75% {
+        transform: translateX(10px);
     }
 }
 
-/* Strobe Class */
-.strobe-effect {
-    animation: strobe 0.1s infinite;
-}
-
-@keyframes strobe {
+@keyframes glitchAnim {
     0% {
-        filter: invert(0);
+        transform: translate(-52%, -50%);
     }
 
-    50% {
-        filter: invert(1);
+    20% {
+        transform: translate(-48%, -50%);
+    }
+
+    40% {
+        transform: translate(-50%, -48%);
+    }
+
+    60% {
+        transform: translate(-50%, -52%);
+    }
+
+    100% {
+        transform: translate(-50%, -50%);
     }
 }
