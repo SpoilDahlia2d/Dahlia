@@ -1,7 +1,7 @@
 /* Configuration */
 const CONFIG = {
     passcode: "DAHLIATOY",
-    unlockCode: "WORSHIPDAHLIA",
+    unlockCode: "WORSHIP",
     spamInterval: 1500,
     itemsUntilPaywall: 60,
     worshipTimeout: 2500,
